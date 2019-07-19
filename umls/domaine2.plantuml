@@ -1,0 +1,79 @@
+@startuml
+
+abstract TimeStampedModel {
+    +created_at: Date
+    +updated_at: Date
+}
+note left: "Tous les classes du diagramme\nhérite de TimeStampedModel\norSi tous les généralisations\nseraient écrites on ne pourrait pas bien\nvoir le reste du diagramme."
+
+class User {
+    user_type: String {no_role,admin,gestionnaire,employe}
+}
+class Employe {
+    +user: User
+    +profession: Profession
+    +date_debut: Date
+}
+
+class Gestionnaire {
+    +user: User
+    +profession: Profession
+}
+
+class Quart {
+    +periode: String {jour,soir,nuit}
+}
+
+class Profession {
+    +nom: String
+}
+class Activite {
+    +nom: String
+    +profession: Profession
+}
+
+class Horaire {
+    +date_debut: Date
+    +date_fin: Date
+    +profession: Profession
+}
+
+class Disponibilite {
+    +activites: Set<Activite>
+    +jour: Jour
+    +quarts: Quart
+    +employe: Employe
+}
+
+class Jour {
+    +date: Date
+    +horaire: Horaire
+    +assignation: Set<Assignation>
+}
+
+class Assignation {
+    +employe: Employe
+    +activite: Activite
+    +jour: Jour
+    +quart: Quart
+}
+
+Gestionnaire --> User : "composé  d'un"
+Employe --* "1" User : "composé d'un"
+
+Employe "*" -- Profession : "travail dans une"
+Gestionnaire --> "1" Profession : "s'occupe d'une"
+Horaire "*" --* "1" Profession : "appartient à une"
+Activite --* Profession : "appartient à une"
+
+Disponibilite --> "1" Employe : "publié par"
+Horaire "1" *-- "28" Jour : "composé de"
+Jour "1" *-- "*" Assignation : "possède des"
+
+Disponibilite  --> "1" Quart : "est disponible pour tel"
+Disponibilite  --> "*" Activite : "peut travaill dans"
+Disponibilite --> "1" Jour : "disponiblite pour une"
+Assignation --> "1" Activite : "assigné à une"
+Assignation --> "1" Employe : "assigné à un"
+Assignation --> "1" Quart : "couvre un"
+@enduml

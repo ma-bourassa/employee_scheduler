@@ -1,0 +1,48 @@
+body {
+  background: #fafafa;
+  color: #222222;
+}
+
+.content {
+  margin: 40px 0px;
+}
+
+/* Entête de l'horaire fixe */
+.table-fixed thead th {
+  position: sticky;
+  top: 0;
+  text-align: center;
+}
+
+/* Colonnes des fins de semaine
+.horaire-gestionnaire td:nth-child(2),
+.horaire-gestionnaire td:nth-child(8),
+.horaire-gestionnaire td:nth-child(9),
+.horaire-gestionnaire td:nth-child(15)
+ {
+  background-color: #ededed;
+} */
+
+
+/* hover sur chaque case */
+.horaire-gestionnaire tbody td:hover,
+.horaire-employe tbody td:hover,
+.disponibilite-employe tbody td:hover {
+  background-color: #ddd;
+  cursor: pointer;
+}
+
+/* Espace entre 2 boutons verticales*/
+div.vspace {
+  clear: both;
+  height: 0.5em;
+}
+
+/* Agrandir les cases d'assignation dans l'horaire employé*/
+.horaire-employe tr:nth-child(even) td {
+  height: 80px;
+}
+
+tr {
+  min-height: 50px;
+}

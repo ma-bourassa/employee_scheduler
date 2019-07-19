@@ -1,0 +1,19 @@
+@startuml
+hide footbox
+title Assigner un employé dans un horaire
+actor Gestionnaire
+participant ":système" as System
+
+Gestionnaire -> System : curseurHoverCellule(range,colonne)
+System -> System : getDisponibiliteEmploye(employe_id, jour_id)
+System -> System : mettre en jaune les jours disponibles
+System --> Gestionnaire
+Gestionnaire -> System : click(range,colonne)
+System -> System : getDisponibiliteEmploye(employe_id, jour_id)
+System -> System : renderFormulaireAssignation(disponibilitesEmploye)
+System --> Gestionnaire : renvoie l'interface mise à jour
+Gestionnaire -> System : envoie formulaire d'assignation
+System -> System : creerAssignation(formulaire)
+System --> Gestionnaire : Envoie de message de réussite
+
+@enduml

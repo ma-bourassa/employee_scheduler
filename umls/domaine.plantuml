@@ -1,0 +1,73 @@
+@startuml
+
+abstract TimeStampedModel {
+    +created_at: Date
+    +updated_at: Date
+}
+note left: "Tous les classes du diagramme\nhérite de TimeStampedModel\norSi tous les généralisations\nseraient écrites on ne pourrait pas bien\nvoir le reste du diagramme."
+
+class User {
+    user_type: String {no_role,admin,gestionnaire,employe}
+}
+class Employe {
+    +user: User
+    +profession: Profession
+    +date_debut: Date
+}
+
+class Gestionnaire {
+    +profession: Profession
+}
+
+class Quart {
+    +periode: String {jour,soir,nuit}
+}
+
+class Profession {
+    +nom: String
+}
+class Activite {
+    +nom: String
+    +profession: Profession
+}
+
+class Horaire {
+    +date_debut: Date
+    +date_fin: Date
+    +profession: Profession
+}
+
+class Disponibilite {
+    +activites: Collection<Activite>
+    +cellule: Cellule
+    +quarts: Collection<Quart>
+}
+
+class Cellule {
+    +date: Date
+}
+
+class CelluleEmploye {
+    +employe: Employe
+    +activite: Activite
+    +cellule: Cellule
+    +quart: Quart
+}
+
+Gestionnaire --* "1" User
+Employe --* "1" User
+
+Gestionnaire --> "1" Profession
+Horaire "*" --* "1" Profession
+Activite --* Profession
+
+Disponibilite --> "1" Employe
+Horaire "1" *-- "28" Cellule
+Cellule "1" *-- "*" CelluleEmploye
+
+Disponibilite  --> "*" Quart
+Disponibilite  --> "*" Activite
+CelluleEmploye --> "1" Activite
+CelluleEmploye --> "1" Employe
+CelluleEmploye --> "1" Quart
+@enduml

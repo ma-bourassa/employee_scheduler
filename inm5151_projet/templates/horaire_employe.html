@@ -1,0 +1,94 @@
+{% extends "base.html" %} {% load staticfiles %} {% block content %}
+<h1>Mon horaire</h1>
+
+<div class="row">
+    <div class="btn-group col-auto">
+        <a class="{% if horaire_choisi == 'courant' %} active {% endif %} btn btn-default btn-info" href="{% url 'horaire_employe' %}?horaire_choisi=courant"
+            role="button">Horaire courant</a>
+        <a class="{% if horaire_choisi == 'prochain' %} active {% endif %} btn btn-default btn-info" href="{% url 'horaire_employe' %}?horaire_choisi=prochain"
+            role="button">Prochain horaire</a>
+    </div>
+</div>
+<div class="vspace"></div>
+
+<table class="table table-bordered table-fixed horaire-employe">
+    <thead class="table-dark bg-dark text-center">
+        <tr class="d-flex">
+            {% for date in dates|slice:":7" %}
+            <td class="col"> {{ date|date:"l" }}</td>
+            {% endfor %}
+        </tr>
+    </thead>
+
+    <tbody>
+        <!-- semaine 1 -->
+        <tr class="text-center d-flex table-secondary">
+            {% for date in dates|slice:":7" %}
+            <td class="col">{{ date|date:"d M" }}</td>
+            {% endfor %}
+        </tr>
+        <tr class="text-center d-flex font-weight-bold">
+            {% for cellule in horaire.cellules|slice:":7" %}
+            <td class="col">
+                {% for quart, activite in cellule.quart_to_activite.items|slice:":7" %}
+                {{ quart.name|title}}&nbsp:&nbsp{{activite.nom }}
+                <br>
+                {% endfor %}
+            </td>
+            {% endfor %}
+        </tr>
+
+        <!-- semaine 2 -->
+        <tr class="text-center d-flex table-secondary">
+            {% for date in dates|slice:"7:14" %}
+            <td class="col">{{ date|date:"d M" }}</td>
+            {% endfor %}
+        </tr>
+        <tr class="text-center d-flex font-weight-bold">
+            {% for cellule in horaire.cellules|slice:"7:14" %}
+            <td class="col">
+                {% for quart, activite in cellule.quart_to_activite.items|slice:"7:14" %}
+                {{ quart.name|title}}&nbsp:&nbsp{{activite.nom }}
+                <br>
+                {% endfor %}
+            </td>
+            {% endfor %}
+        </tr>
+
+        <!-- semaine 3 -->
+        <tr class="text-center d-flex table-secondary">
+            {% for date in dates|slice:"14:21" %}
+            <td class="col">{{ date|date:"d M" }}</td>
+            {% endfor %}
+        </tr>
+        <tr class="text-center d-flex font-weight-bold">
+            {% for cellule in horaire.cellules|slice:"14:21" %}
+            <td class="col">
+                {% for quart, activite in cellule.quart_to_activite.items|slice:"14:21" %}
+                {{ quart.name|title}}&nbsp:&nbsp{{activite.nom }}
+                <br>
+                {% endfor %}
+            </td>
+            {% endfor %}
+        </tr>
+
+        <!-- semaine 4 -->
+        <tr class="text-center d-flex table-secondary">
+            {% for date in dates|slice:"21:28" %}
+            <td class="col">{{ date|date:"d M" }}</td>
+            {% endfor %}
+        </tr>
+        <tr class="text-center d-flex font-weight-bold">
+            {% for cellule in horaire.cellules|slice:"21:28" %}
+            <td class="col">
+                {% for quart, activite in cellule.quart_to_activite.items|slice:"21:28" %}
+                {{ quart.name|title}}&nbsp:&nbsp{{activite.nom }}
+                <br>
+                {% endfor %}
+            </td>
+            {% endfor %}
+        </tr>
+    </tbody>
+</table>
+
+{% endblock content %}

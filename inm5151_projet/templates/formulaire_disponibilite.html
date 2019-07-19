@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+{% load staticfiles %}
+{% block content %}
+
+{% for message in messages %}
+  <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{message.tags}}{% endif %} alert-dismissible fade show" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    {{ message }}
+  </div>
+{% endfor %}
+
+<div class="row">
+  <div class="btn-group col-md-3 offset-md-9">
+      <a class="{% if horaire_choisi == 'courant' %} active {% endif %} btn btn-default btn-info" href="{% url 'disponibilite' %}?horaire_choisi=courant"
+          role="button">Horaire courant</a>
+      <a class="{% if horaire_choisi == 'prochain' %} active {% endif %} btn btn-default btn-info" href="{% url 'disponibilite' %}?horaire_choisi=prochain"
+          role="button">Prochain horaire</a>
+  </div>
+</div>
+<div class="vspace"></div>
+
+<form action="/disponibilites/" method="post">
+  {% csrf_token %}
+  <input type="hidden" name="employe" value="{{ employe_id }}" />
+  <input type="hidden" name="horaire" value="{{ horaire_id }}" />
+  {% for semaine_title, semaine_slice in semaines_set %}
+  <h2>{{ semaine_title }}</h2>
+  <div class="col-md-12">
+    <table class="table table-striped table-bordered disponibilite-employe">
+      <thead>
+        <tr>
+          <td class="table-dark bg-dark text-center">Quarts</td>
+          {% for date in dates|slice:semaine_slice %}
+          <td class="table-dark bg-dark text-center">{{date|date:"Y-m-d"}}</td>
+          {% endfor%}
+        </tr>
+      </thead>
+      <tbody>
+        {% for quart in quarts %}
+        <tr class="employe-row" id="employe-{{ employe.id }}">
+          <td>{{ quart.name|title }}</td>
+          {% for jour in jours|slice:semaine_slice %}
+          <td class="cellule {% if assignations_courantes|one_more:jour.id|has_tuple:quart.value %} unselectable {% else %} selectable {% endif %}">
+            <input type="checkbox" name="disponibilite-{{quart.value}}-{{ jour.id }}" hidden {% if disponibilites_courantes|one_more:jour.id|has_tuple:quart.value %} checked {% endif %} />
+            <div class="line1 {% if disponibilites_courantes|one_more:jour.id|has_tuple:quart.value %} active {% endif %}"></div>
+            <div class="line2 {% if disponibilites_courantes|one_more:jour.id|has_tuple:quart.value %} active {% endif %}"></div>
+          </td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endfor %}
+
+  <h2>Centres d'activités</h2>
+  <div class="col-6">
+    <table class="table table-striped table-bordered table-activites">
+      <thead class="table-dark bg-dark text-center">
+        <tr>
+          {% for _ in activites_partitionne.0 %}
+          <td>Désiré</td>
+          <td></td>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for activites_ranger in activites_partitionne %}
+        <tr>
+          {% for id, nom in activites_ranger %}
+          <td class="text-center">
+            {% if id in activites_courantes %}
+              <input type="hidden" name="activite-{{id}}" value="on">
+            {% endif %}
+            <input type="checkbox" name="activite-{{id}}" onchange="activiteChecked({{ id }})" {% if id in activites_courantes %} checked {% endif %} {% if assignations_courantes %} disabled {% endif %}/>
+          </td>
+          <td>
+            {{ nom|title }}
+          </td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="form-group">
+    <button type="submit" class="btn btn-info">Soumettre</button>
+  </div>
+</form>
+
+<script>
+  function activiteChecked(id) {
+    const self = $("input[type=hidden][name=activite-"+id+"]");
+    const old = self.val();
+    if(old === "on") {
+      self.val("off");
+    } else {
+      self.val("on");
+    }
+  }
+</script>
+
+<style>
+  .unselectable {
+    background-color: #ddd;
+    cursor: not-allowed;
+  }
+
+  /* Basé sur le code qui se trouve : http://jsfiddle.net/htg0Lqd2/4929/ */
+  .cellule {
+    width: 100px;
+    height: 50px;
+    padding: 0;
+    margin: 0
+  }
+
+  td.cellule.selectable:hover {
+    background-color: #17a2b8;
+  }
+
+  .line1.active {
+    border-bottom: 2px solid black;
+    -webkit-transform:
+      translateY(12px) rotate(27deg);
+  }
+
+  .line2.active {
+    border-bottom: 2px solid black;
+    -webkit-transform:
+      translateY(12px) rotate(-27deg);
+  }
+</style>
+
+{% endblock content %}
+
+{% block extra_js %}
+<script src="{% static 'javascripts/formulaire_disponibilite.js' %}"></script>
+{% endblock extra_js %}

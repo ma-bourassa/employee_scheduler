@@ -1,0 +1,57 @@
+{% extends "base.html" %} {% load staticfiles %} {% block content %}
+<h1>Planificateur d'horaire : {{ profession }}</h1>
+
+<div class="row">
+    <div class="btn-group col">
+        <a class="{% if semaine_choisie == '1' %} active {% endif %} btn btn-default btn-info" href="{% url 'planification' %}?semaine_set=1&horaire_choisi={{ horaire_choisi }}"
+            role="button">Semaines 1-2</a>
+        <a class="{% if semaine_choisie == '2' %} active {% endif %} btn btn-default btn-info" href="{% url 'planification' %}?semaine_set=2&&horaire_choisi={{ horaire_choisi }}"
+            role="button">Semaines 3-4</a>
+    </div>
+
+    <div class="btn-group col-auto">
+        <a class="{% if horaire_choisi == 'courant' %} active {% endif %} btn btn-default btn-info" href="{% url 'planification' %}?horaire_choisi=courant"
+            role="button">Horaire courant</a>
+        <a class="{% if horaire_choisi == 'prochain' %} active {% endif %} btn btn-default btn-info" href="{% url 'planification' %}?horaire_choisi=prochain"
+            role="button">Prochain horaire</a>
+    </div>
+</div>
+
+<div class="vspace"></div>
+
+<table class="table table-striped table-bordered table-hover table-fixed horaire-gestionnaire">
+    <input type="hidden" name="semaine-choisie" value="{{ semaine_choisie }}">
+    <input type="hidden" name="horaire" value="{{ horaire_id }}" />
+    
+    <thead class="table-dark bg-dark text-center" >
+        <tr>
+            <td>Employés</td>
+            {% for date in dates %}
+            <td>{{date|date:"Y-m-d"}}</td>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for employe, cellules in horaire %}
+        <tr class="employe-row" id="employe-{{ employe.id }}">
+            <td class="cellule-employe font-weight-bold" data-employe-id="{{ employe.id }}" data-horaire-id="{{ horaire_id }}" data-semaine_choisie="{{ semaine_choisie }}">
+                {{ employe.matricule }}
+            </td>
+            {% for cellule in cellules %}
+            <td class="cellule text-center" data-toggle="popover" data-employe-id="{{ employe.id }}" data-cellule-id="{{ cellule.jour_id }}"
+                data-horaire-id="{{ horaire_id }}" data-semaine_choisie="{{ semaine_choisie }}">
+                {% for quart, activite in cellule.quart_to_activite.items %} {{quart.name|title}}&nbsp:&nbsp{{activite.nom}}
+                <br> {% endfor %}
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div id="popover-content" class="hide">
+</div>
+{% endblock content %} 
+{% block extra_js %}
+<script src="{% static 'javascripts/planification.js' %}"></script> 
+{% endblock extra_js %}

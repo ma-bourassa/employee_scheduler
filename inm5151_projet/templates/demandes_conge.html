@@ -1,0 +1,42 @@
+{% extends "base.html" %} {% block content %}
+<h1>Demandes de congé</h1>
+
+<br>
+{% if demandes %}
+
+<table class="table table-striped table-bordered">
+    <thead class="table-dark bg-dark text-center">
+        <tr>
+            <td>Employés</td>
+            <td>Date</td>
+            <td>Motif</td>
+            <td>Raison</td>
+            <td>Réponse</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for demande in demandes %}
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="employe" value="{{ demande.employe.id }}">
+            <input type="hidden" name="jour" value="{{ demande.jour.id }}">
+            <tr>
+                <td>{{ demande.employe.matricule }}</td>
+                <td>{{ demande.jour.date|date:"Y-m-d" }}</td>
+                <td>{{ demande.motif }}</td>
+                <td>{{ demande.raison }}</td>
+                <td>
+                    <button type="submit" class="btn btn-info" formaction="/conges/approuver/">Approuver</button>
+                    <button type="submit" class="btn btn-info" formaction="/conges/refuser/">Refuser</button>
+                </td>
+            </tr>
+        </form>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% else %}
+<h3>Aucune demandes de congé</h3>
+{% endif %}
+
+{% endblock content %}

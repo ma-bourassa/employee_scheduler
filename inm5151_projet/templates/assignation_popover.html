@@ -1,0 +1,31 @@
+{% load custom_filters %}
+<div>
+    <form id="form-disponibilites">
+        <input type="hidden" name="employe-id" value="{{ employe_id }}" />
+        <input type="hidden" name="jour-id" value="{{ jour_id }}" />
+        <ul class="list-unstyled">
+            {% for quart in quarts_disponibles %}
+              <li>
+                  <label>{{ quart.name|title }}</label>
+                  <input type="hidden" name="quart" value="{{ quart.value }}" />
+                  <select name="activite">
+                      <option value="null">Choisir activité</option>
+                      {% for activite in centre_activite %}
+                      <option value="{{ activite.id }}" {% if quart in assignations_courantes and assignations_courantes|dict_key:quart == activite.id %} selected {% endif %}>
+                          {{ activite.nom }}
+                      </option>
+                      {% endfor %}
+                  </select>
+              </li>
+            {% endfor %}
+        </ul>
+        <div class="col-12 text-center">
+            <button class="assignation btn btn-info ">Ajouter</button>
+        </div>
+        <div class="vspace"></div>
+        <div class="col-12 text-center">
+            <button class="retirer-assignation btn btn-info ">Retirer</button>
+        </div>
+    </form>
+
+</div>

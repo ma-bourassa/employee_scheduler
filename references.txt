@@ -1,0 +1,3 @@
+http://jsfiddle.net/RRGnb/?fbclid=IwAR0TVonNiKhLHFC0dNsyFCdUCOg0SKqfE9eaoJoVv6PioT-HgSpuKFl2Hus
+
+https://stackoverflow.com/questions/16990573/how-to-bind-bootstrap-popover-on-dynamic-elements?fbclid=IwAR0TVonNiKhLHFC0dNsyFCdUCOg0SKqfE9eaoJoVv6PioT-HgSpuKFl2Hus

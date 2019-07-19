@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<h1>Nouvelle Demande de congé</h1>
+
+<br>
+<form action="/conges/nouvelle_demande/" method="post" id="form_demande_conge">
+    {% csrf_token %}
+    <input type="hidden" name="horaire" value="{{ horaire_id }}" />
+
+    <div class="form-group col-6">
+        <label for="date_conge" class="font-weight-bold">Date du congé</label>
+        <input type="date" class="form-control" name="jour" id="date_conge">
+    </div>
+
+    <div class="form-group col-6">
+        {% for motif_value, motif_enum in motifs %}
+        <div class="custom-control custom-radio">
+            <input class="custom-control-input" type="radio" name="motif" id="{{ motif_enum }}" value="{{ motif_enum.value }}">
+            <label class="custom-control-label" for="{{ motif_enum }}">
+                {{ motif_enum.value }}
+            </label>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="form-group col-6">
+        <label for="raison" class="font-weight-bold">Raison</label>
+        <textarea class="form-control" name="raison" id="raison" rows="4"></textarea>
+    </div>
+    <div class="form-group col-6">
+        <button type="submit" class="btn btn-info">Soumettre</button>
+    </div>
+</form>
+<br>
+
+<h1>Mes demandes de congé</h1>
+{% if conges %}
+
+<div class="col-9">
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark bg-dark text-center">
+            <tr>
+                <td>Date</td>
+                <td>Motif</td>
+                <td>Status</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for motif, jour, status in conges %}
+            <tr>
+                <td>{{ jour.date|date:"Y-m-d" }}</td>
+                <td>{{ motif }}</td>
+                <td>{{ status|title }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<h3>Aucune demande de congé</h3>
+{% endif %}
+
+{% endblock content %}

@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'stylesheets/style.css' %}"> {% if title %}
+    <title>Django - {{ title }}</title>
+    {% else %}
+    <title>Django</title>
+    {% endif %}
+</head>
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+            <a class="navbar-brand" href="{% url 'home' %}">CISSS Montérégie-Centre</a>
+            <div class="container-fluid">
+                <!-- Menu visible pour utilisateur authentifié-->
+                {% if user.is_authenticated %}
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <!-- Navbar de gauche-->
+                    <div class="navbar-nav mr-auto">
+                        <a class=" {{ home_page }} nav-item nav-link" href="{% url 'home' %}">Accueil</a>
+                        {% if user.is_superuser %}
+                        <a class="nav-item nav-link" href="{% url 'admin:index' %}">Administration</a>
+                        {% endif %}
+                        <!-- Visible pour gestionnaire seulement-->
+                        {% if user.user_type == 2 %}
+                        <a class=" {{ horaire_page }} nav-item nav-link" href="{% url 'planification' %}">Horaire</a>
+                        <a class=" {{ conges_page }} nav-item nav-link" href="{% url 'demandes_conge' %}">Demandes de
+                            congé</a>
+                        <!-- Visible pour employe seulement-->
+                        {% endif %}
+                        {% if user.user_type == 3 %}
+                        <a class=" {{ horaire_page }} nav-item nav-link" href="{% url 'horaire_employe' %}">Mon horaire</a>
+                        <a class=" {{ horaire_general_page }} nav-item nav-link" href="{% url 'horaire_general' %}">Horaire
+                            général</a>
+                        <a class=" {{ disponibilite_page }} nav-item nav-link" href="{% url 'disponibilite' %}">Disponibilité</a>
+                        <a class=" {{ conge_page }} nav-item nav-link" href="{% url 'conge' %}">Demande de congé</a>
+                        {% endif %}
+                    </div>
+                    <!-- Navbar de droite-->
+                    <div class="navbar-nav ml-auto">
+                        <a class=" {{ profil_page }} nav-item nav-link" href="{% url 'profil' %}">{{ user.username }}</a>
+                        <a class="nav-item nav-link" href="{% url 'logout' %}">Déconnexion</a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </nav>
+    </header>
+
+    <div class="container-fluid content row">
+        <div class="col-10 offset-1">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+  ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <script>
+        // code taken from django website:  https://docs.djangoproject.com/en/2.1/ref/csrf/
+        // Ce code doit être disponible dans l'application pour avoir accès au fonctionnement
+        // de la protection Cross-Site-Request-Forgry.
+        function getCookie(name) {
+
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+    </script> {% block extra_js %}{% endblock %}
+</body>
+
+</html>

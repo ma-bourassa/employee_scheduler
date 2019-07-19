@@ -1,0 +1,104 @@
+@startuml
+
+class cellules_employes {
+}
+
+class users {
+    +id: int
+    +matricule: string, unique
+    +nom: string
+    +prenom: string
+    +encrypted_password: string, min: 6, max: 255
+    +role: {EMPLOYE, GESTIONNAIRE, ADMIN}
+    +created_at: timestamp
+    +last_update_at: timestamp
+}
+
+class employes {
+    +id: int
+    +experience: min 0
+    +type_employe : {TP,TPR,TPO}
+    +created_at: timestamp
+    +last_update_at: timestamp
+}
+
+class admins {
+    +id: int
+    +created_at: timestamp
+    +last_update_at: timestamp
+}
+
+class gestionnaires {
+    +id: int
+    +created_at: timestamp
+    +last_update_at: timestamp
+}
+
+class horaires {
+    +id: int
+    +date_debut
+    +date_fin
+    +statut = {EN_COURS, PROCHAINE_PERIODE}
+    +created_at: timestamp
+    +last_update_at: timestamp
+}
+
+class professions {
+    +id: int
+    +nom: string
+    +created_at: timestamp
+    +last_update_at: timestamp
+}
+
+class cellules {
+    +id: int
+    +date: timestamp
+    +quart: [nuit, jour, soir]
+    +created_at: timestamp
+    +last_update_at: timestamp
+}
+
+class disponibilites {
+    +id: int
+    +created_at: timestamp
+    +last_update_at: timestamp
+}
+
+class activites {
+    +id: int
+    +nom: string
+    +created_at: timestamp
+    +last_update_at: timestamp
+}
+class disponibilite_activites {
+    +id: int
+    +created_at: timestamp
+    +last_update_at: timestamp
+}
+
+' Relations concernant les différents utilisateurs
+employes "1" -- "1" users
+gestionnaires "1" -- "1" users
+admins "1" -- "1" users
+
+' Relations profession
+gestionnaires "N" -- "1" professions
+employes "N" -- "1" professions
+activites "N" -- "1" professions
+
+' Relations cellule
+cellules "1" -- "N" cellules_employes
+cellules_employes "N" -- "1" employes
+cellules_employes "N" -- "1" activites
+
+' Relations en rapport avec un horaire
+horaires "1" -- "N" cellules
+horaires "N" -- "1" professions
+
+' Relations pour les disponibilites
+employes "1" -- "N" disponibilites
+disponibilites "1" -- "N" disponibilite_activites
+disponibilite_activites "N" -- "1" activites
+
+
+@enduml

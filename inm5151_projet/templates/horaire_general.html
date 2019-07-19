@@ -1,0 +1,48 @@
+{% extends "base.html" %} {% load staticfiles %} {% block content %}
+<h1>Horaire général : {{ profession }}</h1>
+
+<div class="row">
+    <div class="btn-group col">
+        <a class="{% if semaine_choisie == '1' %} active {% endif %} btn btn-default btn-info" href="{% url 'horaire_general' %}?semaine_set=1&horaire_choisi={{ horaire_choisi }}"
+            role="button">Semaines 1-2</a>
+        <a class="{% if semaine_choisie == '2' %} active {% endif %} btn btn-default btn-info" href="{% url 'horaire_general' %}?semaine_set=2&&horaire_choisi={{ horaire_choisi }}"
+            role="button">Semaines 3-4</a>
+    </div>
+
+    <div class="btn-group col-auto">
+        <a class="{% if horaire_choisi == 'courant' %} active {% endif %} btn btn-default btn-info" href="{% url 'horaire_general' %}?horaire_choisi=courant"
+            role="button">Horaire courant</a>
+        <a class="{% if horaire_choisi == 'prochain' %} active {% endif %} btn btn-default btn-info" href="{% url 'horaire_general' %}?horaire_choisi=prochain"
+            role="button">Prochain horaire</a>
+    </div>
+</div>
+
+<div class="vspace"></div>
+
+<table class="table table-striped table-bordered table-fixed horaire-general">    
+    <thead class="table-dark bg-dark text-center" >
+        <tr>
+            <td>Employés</td>
+            {% for date in dates %}
+            <td>{{date|date:"Y-m-d"}}</td>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for employe, cellules in horaire %}
+        <tr>
+            <td class="font-weight-bold">
+                {{ employe.matricule }}
+            </td>
+            {% for cellule in cellules %}
+            <td class="cellule text-center">
+                {% for quart, activite in cellule.quart_to_activite.items %} {{quart.name|title}}&nbsp:&nbsp{{activite.nom}}
+                <br> {% endfor %}
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock content %}
